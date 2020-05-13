@@ -1,0 +1,3 @@
+MAX LAP:3	/ How many laps the race is
+MAX CHP:20	/ How many check points there are
+CHP ROW:4	/ What row is the checkpoints at the right side of screen, counting from bottom

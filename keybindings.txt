@@ -1,0 +1,8 @@
+        NORMAL     / +MODIFIER   / +CHEAT MODIFIER
+KEY1:I 	Max lap +1 / Max lap +10 / Forward 1 lap 		| LAP KEY UP 
+KEY2:U 	Max lap -1 / Max lap -10 / Backwards 1 lap 		| LAP KEY DOWN
+KEY3:K 	Max CP +1  / Max CP +10  / Forward 1 Checkpoint 	| CHECKPOINT KEY UP
+KEY4:J 	Max CP -1  / Max CP -10  / Backwards 1 Checkpoint 	| CHECKPOINT KEY DOWN
+KEY5:H 	START 	   / PAUSE       / RESTART			| START
+KEY6:O 	MODIFIER						| MODIFIER
+KEY7:L 	CHEAT MODIFIER						| CHEAT MODIFIER
