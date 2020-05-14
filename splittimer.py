@@ -110,6 +110,7 @@ keybind_4 = keybindings[4]  #KEY4:J 	Max CP -1  / Max CP -10  / Backwards 1 Chec
 keybind_5 = keybindings[5]  #KEY5:H 	START 	   / PAUSE       / RESTART		 | START
 keybind_6 = keybindings[6]  #KEY6:O 	MODIFIER					 | MODIFIER
 keybind_7 = keybindings[7]  #KEY7:L 	CHEAT MODIFIER					 | CHEAT MODIFIER
+keybind_8 = keybindings[8]  #KEY8:F     YOUR IN GAME RESPAWN BUTTON                      | PREVENTS FALSE CHECKPOINT TRIGGER WHEN RESPAWNING
 
 print("           NORMAL     / +MODIFIER   / +CHEAT MODIFIER")
 print("KEY1:%s     Max lap +1 / Max lap +10 / Forward 1 lap         | LAP KEY UP" % (keybind_1))
@@ -119,6 +120,7 @@ print("KEY4:%s     Max CP -1  / Max CP -10  / Backwards 1 Checkpoint| CHECKPOINT
 print("KEY5:%s     START      / PAUSE       / RESTART		    | START" % (keybind_5))
 print("KEY6:%s     MODIFIER					    | MODIFIER" % (keybind_6))
 print("KEY7:%s     CHEAT MODIFIER				    | CHEAT MODIFIER" % (keybind_7))
+print("KEY8:%s     YOUR IN GAME RESPAWN BUTTON                      | PREVENTS FALSE CHECKPOINT TRIGGER WHEN RESPAWNING" % (keybind_8))
 print("")
 
 
@@ -129,6 +131,7 @@ was_pressed_4 = False
 was_pressed_5 = False
 was_pressed_6 = False
 was_pressed_7 = False
+was_pressed_8 = False
 
 #---------------------------------------------------------
 #Load settings
@@ -162,11 +165,13 @@ dc = w.GetWindowDC()
 
 
 #Just creating variables, don't change here, scroll down
+
+respawntimer = 0
 maxlap = 1
 was_maxlap_changed = False
 
 start = 2
-print("PAUSED... waiting for input press '%s' to load script" % (keybind_5))
+
 
 
 invalidlap = False
@@ -187,29 +192,33 @@ def startrace():
 
 while(True):
     
+    print("PAUSED... waiting for input press '%s' to load script" % (keybind_5))
     while(start == 2):
         time.sleep(0.01)
         if(keyboard.is_pressed(keybind_5)):
-            
-            start = 0
-            
-            file = open("checkpointblue.txt","w")
-            file.write("")
-            file.close()
+            if not was_pressed_5:
+                
+                start = 0
+                
+                file = open("checkpointblue.txt","w")
+                file.write("")
+                file.close()
 
-            file = open("checkpointred.txt","w")
-            file.write("")
-            file.close()
+                file = open("checkpointred.txt","w")
+                file.write("")
+                file.close()
 
-            file = open("time.txt","w")
-            file.write("")
-            file.close()
+                file = open("time.txt","w")
+                file.write("")
+                file.close()
 
-            file = open("laptimes.txt","w")
-            file.write("")
-            file.close()
-            was_pressed_5 = True
-            break
+                file = open("laptimes.txt","w")
+                file.write("")
+                file.close()
+                was_pressed_5 = True
+                break
+        else:
+            was_pressed_5 = False
             
     print("READY... waiting for race to start or input press '%s' to start" % (keybind_5))    
     while(start == 0):
@@ -266,7 +275,9 @@ while(True):
     if(was_maxlap_changed == False):
         maxlap = settings[0]
     else:
-        was_maxlap_changed = False        
+        was_maxlap_changed = False
+
+    graceperiod = 5
     
     lcp = settings[1]
     
@@ -289,20 +300,64 @@ while(True):
     print("Checkpoints: %s\n" % (lcp))
     print("Checkpoint at row: %s\n" % (cursorrow))
 
+    #last_time = time.time()
+    releaseme = time.time()-5
 
     while(True):
 
-        #zboisRGB = dc.GetPixel (1849,924)
-        #zboisRGB = dc.GetPixel (1210,17)
-        zboisRGB = dc.GetPixel (53,31)
+        #print('Loop took %s seconds' % (time.time()-last_time))
+        #last_time = time.time()
+        
+        #print('Loop took %s seconds' % (time.time()-last_time))
+        #last_time = time.time()
 
+        zboisRGB = dc.GetPixel (58,34)
         zboisI = getintensity(zboisRGB)
+        
+        #zboisRGB = dc.GetPixel (1849,924)
+        globeRGB = dc.GetPixel (1210,17)
+        #zboisRGB = dc.GetPixel (50,30)
 
-        if(zboisI < 234) and not (ccp == 0 and lap == maxlap): #234
+        #zboisI = getintensity(zboisRGB)
+        globeI = getintensity(globeRGB)
+
+        #if(zboisI < 234) and not (ccp == 0 and lap == maxlap): #234
+            #pressKey(Z)
+            #time.sleep(.055)
+            #releaseKey(Z)
+        
+        releasemedelta = time.time()-releaseme
+        
+        if(globeI > 0 and zboisI < 245 and not (ccp == 0 and lap == maxlap) and releasemedelta > .75): #234
+            print(globeI)
             pressKey(Z)
-            time.sleep(.055)
+            time.sleep(.005)
             releaseKey(Z)
+            count = 0
+            releaseme = time.time()
+            while(True):
+                
+                zboisRGB = dc.GetPixel (58,34) #(50,30)
+                zboisI = getintensity(zboisRGB)
+                count += 1
+                print("i'm stuck in a loop")
+                if(zboisI > 245):
+                    print("Looped: %s times" % (count))
+                    time.sleep(0.05)
+                    break                    
+                elif(count > 20):
+                    print(zboisI)
+                    print("I got suck in vinkelvolten: %s times" % (count))
+                    break
 
+        #just in case Z is pressed it corrects it back to normal
+        #elif(zboisI < 234 and globeI > 0 and not (ccp == 0 and lap == maxlap) and releasemedelta > .25):
+            #print("pressed Z")
+            #pressKey(Z)
+            #time.sleep(.055)
+            #releaseKey(Z)
+            #releaseme = time.time()
+        
         #sets Current Check Point to 0 if you are at the last checkpoint(lcp)
         if(ccp >= lcp):
             ccp = 0
@@ -317,6 +372,9 @@ while(True):
         Intensity = getintensity(RGBint)
 
         #Check for key presses
+
+        
+        
         
         #Cursors row increase
         if(keyboard.is_pressed(keybind_1) and keyboard.is_pressed(keybind_6) and cursorrow < 10):
@@ -413,7 +471,7 @@ while(True):
                 break                
         else:
             was_pressed_5 = False
-       
+            
         #Decrease max checkpoints
         if(keyboard.is_pressed(keybind_4) and lcp > 1):
             if not was_pressed_4:
@@ -433,6 +491,21 @@ while(True):
                 print("Max Checkpoints: ▲ %s" % (lcp))
         else:
             was_pressed_3 = False
+
+        #Respawn timer grace period
+        if(keyboard.is_pressed(keybind_8)):
+            if not was_pressed_8:
+                was_pressed_8 = True
+                timerkey8 = time.time()
+                
+            if was_pressed_8:
+                print("%s: %s" % (keybind_8,round(time.time()-timerkey8,1)))
+                time.sleep(0.1)
+                if(time.time()-timerkey8 > 2.5):
+                    respawntimer = time.time()
+                    print("You did it, you held it for 2.5 sec")
+        else:
+            was_pressed_8 = False
                     
         #Decrease max laps
         if(keyboard.is_pressed(keybind_2)):
@@ -457,12 +530,22 @@ while(True):
 
             dottieI = getintensity(dottieRGB)
 
-            
+        
+        
         #print(Intensity)
         #time.sleep(.1)
         #Check if intensity of pixel is reached then do checkpoint
         #CHECKPOINT
-        if(240 <= Intensity <= 240 and not (ccp == 0 and lap == maxlap) or dottieI < 235):
+
+        if(time.time()-respawntimer < 2.5):
+            print(round(2.5-(time.time()-respawntimer),1))
+            time.sleep(.1)
+            
+        elif(time.time()-racetimer < graceperiod and lap == 1):
+            print(round(graceperiod-(time.time()-racetimer),1))
+            time.sleep(.1)
+            
+        elif(240 <= Intensity <= 240 and not (ccp == 0 and lap == maxlap) or dottieI < 235):
             print(Intensity)
             print(cursor[0]+tcp[0],cursor[1]+tcp[1])
             delta = time.time()-racetimer
@@ -500,6 +583,7 @@ while(True):
             
             ccp += 1
             print("Checkpoint: %s" % (ccp))
+        
 
 
         #LAP
