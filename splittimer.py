@@ -150,14 +150,15 @@ for i in mylist:
 #   settings[0] maxlap | MAX LAPs
 #   settings[1] lcp | MAX CPs
 #   settings[2] cursorrow | Checkpoint Row
+#   settings[3] graceperiod | Grace Period at start of race
+#   settings[4] fullscreen | If the game is run in fullscreen or not
 
 #-----------------------------------------------------------
 
-#t1 = time.time()
 color = {0,0,0}
 cursorpos = [1865,1858,1858,1858,1859,1858,1860,1859,1858,1847,1855,1848,1848,1848,1849,1848,1850,1848,1848,1840,1848,1842,1841,1842,1842,1841,1843,1842,1841,1840,1848,1841,1841,1841,1841,1841,1843,1841,1841,1840,1848,1842,1841,1842,1842,1841,1843,1842,1841,1841,1849,1842,1841,1842,1843,1841,1843,1842,1841,1840,1848,1841,1840,1841,1841,1840,1842,1841,1840,1842,1849,1843,1842,1843,1843,1842,1844,1843,1842,1840,1848,1842,1841,1842,1842,1841,1843,1842,1841,1840,1848,1841,1840,1841,1841,1840,1842,1841,1840]
 #cursor = [1850,924]
-cp = np.array([[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-5,-6],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-5,-6],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-5,-6],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-5,-6],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-5,-6],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-5,-6],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-5,-6],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-5,-6],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-5,-6],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-5,-6],[-10,-8]])
+cp = np.array([[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8]])
 
 
 w = win32ui.FindWindow( None, name )
@@ -165,7 +166,7 @@ dc = w.GetWindowDC()
 
 
 #Just creating variables, don't change here, scroll down
-
+lcpendinone = False
 respawntimer = 0
 maxlap = 1
 was_maxlap_changed = False
@@ -271,6 +272,8 @@ while(True):
     #   settings[0] maxlap | MAX LAPs
     #   settings[1] lcp | MAX CPs
     #   settings[2] cursorrow | Checkpoint Row
+    #   settings[3] graceperiod | Grace Period at start of race
+    #   settings[4] fullscreen | If the game is run in fullscreen or not
     
     if(was_maxlap_changed == False):
         maxlap = settings[0]
@@ -280,6 +283,11 @@ while(True):
     graceperiod = 5
     
     lcp = settings[1]
+
+    if(lcp in (11, 21, 31, 41, 51, 61, 71, 81, 91)):
+        lcpendinone = True
+    else:
+        lcpendinone = False
     
     cursorrow = settings[2]
       
@@ -307,29 +315,26 @@ while(True):
 
         #print('Loop took %s seconds' % (time.time()-last_time))
         #last_time = time.time()
-        
-        #print('Loop took %s seconds' % (time.time()-last_time))
-        #last_time = time.time()
 
-        zboisRGB = dc.GetPixel (58,34)
-        zboisI = getintensity(zboisRGB)
-        
         #zboisRGB = dc.GetPixel (1849,924)
-        globeRGB = dc.GetPixel (1210,17)
         #zboisRGB = dc.GetPixel (50,30)
-
         #zboisI = getintensity(zboisRGB)
-        globeI = getintensity(globeRGB)
-
+        
         #if(zboisI < 234) and not (ccp == 0 and lap == maxlap): #234
             #pressKey(Z)
             #time.sleep(.055)
             #releaseKey(Z)
-        
+                
+        zboisRGB = dc.GetPixel (58,34)
+        zboisI = getintensity(zboisRGB)        
+
+        globeRGB = dc.GetPixel (1210,17)        
+        globeI = getintensity(globeRGB)
+
         releasemedelta = time.time()-releaseme
         
         if(globeI > 0 and zboisI < 245 and not (ccp == 0 and lap == maxlap) and releasemedelta > .75): #234
-            print(globeI)
+            #print(globeI)
             pressKey(Z)
             time.sleep(.005)
             releaseKey(Z)
@@ -340,9 +345,8 @@ while(True):
                 zboisRGB = dc.GetPixel (58,34) #(50,30)
                 zboisI = getintensity(zboisRGB)
                 count += 1
-                print("i'm stuck in a loop")
                 if(zboisI > 245):
-                    print("Looped: %s times" % (count))
+                    #print("Looped: %s times" % (count))
                     time.sleep(0.05)
                     break                    
                 elif(count > 20):
@@ -364,17 +368,17 @@ while(True):
 
         #save previous ccp
         pcp = ccp
-            
+
+        #target cp    
         tcp = cp[ccp+1]
-        #cursor = [cursor[0],cursor[1]-(cursorrow-4)*43]
+        
         RGBint = dc.GetPixel (cursor[0]+tcp[0],cursor[1]+tcp[1])
         
         Intensity = getintensity(RGBint)
 
+#----------------------------------------------------------------------------------------------
         #Check for key presses
 
-        
-        
         
         #Cursors row increase
         if(keyboard.is_pressed(keybind_1) and keyboard.is_pressed(keybind_6) and cursorrow < 10):
@@ -401,6 +405,11 @@ while(True):
                 lcp -= 10
                 cursor = [cursorpos[lcp-1],cursor[1]]
                 was_pressed_4 = True
+                
+                if(lcp in (11, 21, 31, 41, 51, 61, 71, 81, 91)):
+                    lcpendinone = True
+                else:
+                    lcpendinone = False
                 print("Max Checkpoints: ▼ %s" % (lcp))
 
         #Increase max checkpoints +10
@@ -409,6 +418,11 @@ while(True):
                 lcp += 10
                 cursor = [cursorpos[lcp-1],cursor[1]]
                 was_pressed_3 = True
+
+                if(lcp in (11, 21, 31, 41, 51, 61, 71, 81, 91)):
+                    lcpendinone = True
+                else:
+                    lcpendinone = False
                 print("Max Checkpoints: ▲ %s" % (lcp))
 
         #Back 1 checkpoint
@@ -478,7 +492,13 @@ while(True):
                 lcp -= 1
                 cursor = [cursorpos[lcp-1],cursor[1]]
                 was_pressed_4 = True
-                print("Max Checkpoints: ▼ %s" % (lcp))
+                
+                if(lcp in (11, 21, 31, 41, 51, 61, 71, 81, 91)):
+                    lcpendinone = True
+                else:
+                    lcpendinone = False
+                    
+                print("Max Checkpoints: ▼ %s" % (lcp))                
         else:
             was_pressed_4 = False
                     
@@ -488,6 +508,12 @@ while(True):
                 lcp += 1
                 cursor = [cursorpos[lcp-1],cursor[1]]
                 was_pressed_3 = True
+                
+                if(lcp in (11, 21, 31, 41, 51, 61, 71, 81, 91)):
+                    lcpendinone = True
+                else:
+                    lcpendinone = False
+                    
                 print("Max Checkpoints: ▲ %s" % (lcp))
         else:
             was_pressed_3 = False
@@ -530,22 +556,37 @@ while(True):
 
             dottieI = getintensity(dottieRGB)
 
-        
-        
-        #print(Intensity)
-        #time.sleep(.1)
-        #Check if intensity of pixel is reached then do checkpoint
+#----------------------------------------------------------------------------------------------
         #CHECKPOINT
+            
+            
+        endindoneReady = True
+        
+        if(lcpendinone == True and ccp == 0 and lap != maxlap):
+            #gets first digit in lcp
+            onetcp = cp[int(str(lcp)[:1])]
 
+            RGBendinone = dc.GetPixel (cursor[0]+onetcp[0]-10,cursor[1]+onetcp[1])
+            endinoneI = getintensity(RGBendinone)
+            
+            print(cursor[0]+onetcp[0]-10,cursor[1]+onetcp[1])
+            print(endinoneI)
+            if(endinoneI < 240):
+                endindoneReady = True
+            else:
+                endindoneReady = False
+
+        #after you respawn disables checkpoint reading for a while because of flashing screen
         if(time.time()-respawntimer < 2.5):
             print(round(2.5-(time.time()-respawntimer),1))
             time.sleep(.1)
-            
+        #Grace peroid at beginning of race before reading checkpoints    
         elif(time.time()-racetimer < graceperiod and lap == 1):
             print(round(graceperiod-(time.time()-racetimer),1))
             time.sleep(.1)
             
-        elif(240 <= Intensity <= 240 and not (ccp == 0 and lap == maxlap) or dottieI < 235):
+        #Check if intensity of pixel is reached then do checkpoint    
+        elif(240 <= Intensity <= 240 and not (ccp == 0 and lap == maxlap) and endindoneReady or dottieI < 235):
             print(Intensity)
             print(cursor[0]+tcp[0],cursor[1]+tcp[1])
             delta = time.time()-racetimer
@@ -622,7 +663,6 @@ while(True):
             lap += 1
             pcp = 1
             if(lap > maxlap):
-                print("PAUSED... waiting for input press '%s' to reload script" % (keybind_5))
                 start = 2
                 break
             
