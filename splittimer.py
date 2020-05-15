@@ -1,11 +1,12 @@
-name = "Grand Theft Auto V"
 import win32ui
 import win32api
+import d3dshot
 import time
 import numpy as np
 import keyboard
 import ctypes
 import datetime
+name = "Grand Theft Auto V"
 
 #Keyoutput Directkeys with ScanCodes
 #-------------------------------------------------------------
@@ -150,22 +151,27 @@ for i in mylist:
 #   settings[0] maxlap | MAX LAPs
 #   settings[1] lcp | MAX CPs
 #   settings[2] cursorrow | Checkpoint Row
-#   settings[3] graceperiod | Grace Period at start of race
-#   settings[4] fullscreen | If the game is run in fullscreen or not
+#   settings[3] graceperiod | Grace Period at start of race in seconds
+#   settings[4] fullscreen | If the game is run in fullscreen or not, 1 or 0
 
 #-----------------------------------------------------------
 
-color = {0,0,0}
 cursorpos = [1865,1858,1858,1858,1859,1858,1860,1859,1858,1847,1855,1848,1848,1848,1849,1848,1850,1848,1848,1840,1848,1842,1841,1842,1842,1841,1843,1842,1841,1840,1848,1841,1841,1841,1841,1841,1843,1841,1841,1840,1848,1842,1841,1842,1842,1841,1843,1842,1841,1841,1849,1842,1841,1842,1843,1841,1843,1842,1841,1840,1848,1841,1840,1841,1841,1840,1842,1841,1840,1842,1849,1843,1842,1843,1843,1842,1844,1843,1842,1840,1848,1842,1841,1842,1842,1841,1843,1842,1841,1840,1848,1841,1840,1841,1841,1840,1842,1841,1840]
 #cursor = [1850,924]
 cp = np.array([[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8],[-18,-8],[-9,-17],[-13,-7],[-11,-11],[-11,-6],[-13,-19],[-17,-7],[-5,-19],[-14,-10],[-10,-8]])
 
+if(settings[4] == 1):
+    fullscreen = 1
+else:
+    fullscreen = 0
 
-w = win32ui.FindWindow( None, name )
-dc = w.GetWindowDC()
+if(fullscreen == 0):
+    w = win32ui.FindWindow( None, name )
+    dc = w.GetWindowDC()
 
 
 #Just creating variables, don't change here, scroll down
+prevgrace = 0
 lcpendinone = False
 respawntimer = 0
 maxlap = 1
@@ -179,25 +185,48 @@ invalidlap = False
 
 racetimer = 0
 
-def getintensity(intRGB):
-    intR =  intRGB & 255
-    intG = (intRGB >> 8) & 255
-    intB =   (intRGB >> 16) & 255
-    intI = (intR+intG+intB)/3
-    return(intI)
+def getintensity(inX,inY):
+
+    if(fullscreen):
+
+        #the y and x are reversed because that's the way it comes out from d3dshot
+        frame = d.get_latest_frame()        
+        #print(inX)
+        #print(inY)
+        #print(np.shape(frame))
+        
+        frame = frame[inY,inX]
+        #print(frame)
+        intensityFullscreen = (int(frame[0])+int(frame[1])+int(frame[2]))/3
+        #print(intensityFullscreen)
+        return(intensityFullscreen)
+    
+    else:
+        intRGB = dc.GetPixel (inX,inY)
+        
+        intR =  intRGB & 255
+        intG = (intRGB >> 8) & 255
+        intB =   (intRGB >> 16) & 255
+        intI = (intR+intG+intB)/3
+        return(intI)
 
 def startrace():
     start = 1
     print("GOOOOOOO!!!!")
       
-
+#d = d3dshot.create(capture_output="numpy",frame_buffer_size=10)
 while(True):
     
     print("PAUSED... waiting for input press '%s' to load script" % (keybind_5))
     while(start == 2):
-        time.sleep(0.01)
+        #time.sleep(0.05)
         if(keyboard.is_pressed(keybind_5)):
             if not was_pressed_5:
+
+                if(fullscreen):
+                    d = d3dshot.create(capture_output="numpy",frame_buffer_size=10)
+                    d.capture(target_fps = 100)
+                    time.sleep(.1)
                 
                 start = 0
                 
@@ -224,9 +253,9 @@ while(True):
     print("READY... waiting for race to start or input press '%s' to start" % (keybind_5))    
     while(start == 0):
         
-        startRGB = dc.GetPixel (1030,266)
+        #startRGB = dc.GetPixel (1030,266)
 
-        startI = getintensity(startRGB)
+        startI = getintensity(1030,266)
 
         if(keyboard.is_pressed(keybind_5)):
             if not was_pressed_5:
@@ -235,7 +264,6 @@ while(True):
                 was_pressed_5 = True
                 break
         else:
-            pass
             was_pressed_5 = False
         
         if(startI > 250):
@@ -280,7 +308,8 @@ while(True):
     else:
         was_maxlap_changed = False
 
-    graceperiod = 5
+    graceperiod = settings[3]
+    gracecounter = graceperiod+1
     
     lcp = settings[1]
 
@@ -325,32 +354,38 @@ while(True):
             #time.sleep(.055)
             #releaseKey(Z)
                 
-        zboisRGB = dc.GetPixel (58,34)
-        zboisI = getintensity(zboisRGB)        
+        #zboisRGB = dc.GetPixel (58,34)
+        zboisI = getintensity(58,34)        
 
-        globeRGB = dc.GetPixel (1210,17)        
-        globeI = getintensity(globeRGB)
+        #globeRGB = dc.GetPixel (1210,17)        
+        globeI = getintensity(1210,17)
 
         releasemedelta = time.time()-releaseme
         
         if(globeI > 0 and zboisI < 245 and not (ccp == 0 and lap == maxlap) and releasemedelta > .75): #234
             #print(globeI)
             pressKey(Z)
-            time.sleep(.005)
+            time.sleep(.015)
             releaseKey(Z)
             count = 0
             releaseme = time.time()
             while(True):
                 
-                zboisRGB = dc.GetPixel (58,34) #(50,30)
-                zboisI = getintensity(zboisRGB)
+                #zboisRGB = dc.GetPixel (58,34) #(50,30)
+                zboisI = getintensity(58,34)
+                #print(zboisI)
+                time.sleep(0.005)
                 count += 1
                 if(zboisI > 245):
+                    print(count)
+                    print("i did it actually, wtf")
                     #print("Looped: %s times" % (count))
                     time.sleep(0.05)
-                    break                    
-                elif(count > 20):
+                    break
+                
+                elif(count > 29):
                     print(zboisI)
+                    print("58,34")
                     print("I got suck in vinkelvolten: %s times" % (count))
                     break
 
@@ -372,9 +407,10 @@ while(True):
         #target cp    
         tcp = cp[ccp+1]
         
-        RGBint = dc.GetPixel (cursor[0]+tcp[0],cursor[1]+tcp[1])
+        #RGBint = dc.GetPixel (cursor[0]+tcp[0],cursor[1]+tcp[1])
         
-        Intensity = getintensity(RGBint)
+        Intensity = getintensity(cursor[0]+tcp[0],cursor[1]+tcp[1])
+
 
 #----------------------------------------------------------------------------------------------
         #Check for key presses
@@ -465,6 +501,9 @@ while(True):
         elif(keyboard.is_pressed(keybind_5) and keyboard.is_pressed(keybind_6) and maxlap < 99):
             if not was_pressed_5:
                 print("Paused!... press %s to resume" % (keybind_5))
+                if(fullscreen):
+                    d.stop()
+                    del d
                 was_pressed_5 = True
                 while(True):
                     time.sleep(0.01)
@@ -472,6 +511,10 @@ while(True):
                         if not was_pressed_5:
                             was_pressed_5 = True
                             print("Unpaused! Go!")
+                            if(fullscreen):
+                                d = d3dshot.create(capture_output="numpy",frame_buffer_size=10)
+                                d.capture(target_fps = 100)
+                                time.sleep(.1)
                             break
                     else:
                         was_pressed_5 = False
@@ -481,6 +524,9 @@ while(True):
             if not was_pressed_5:
                 was_pressed_5 = True
                 print("Restart, back to beginning of script")
+                if(fullscreen):
+                    d.stop()
+                    del d
                 start = 2
                 break                
         else:
@@ -552,9 +598,9 @@ while(True):
             was_pressed_1 = False
             
         if(ccp == 0 and lap == maxlap):
-            dottieRGB = dc.GetPixel (1846,1051)
+            #dottieRGB = dc.GetPixel (1846,1051)
 
-            dottieI = getintensity(dottieRGB)
+            dottieI = getintensity(1846,1051)
 
 #----------------------------------------------------------------------------------------------
         #CHECKPOINT
@@ -566,8 +612,8 @@ while(True):
             #gets first digit in lcp
             onetcp = cp[int(str(lcp)[:1])]
 
-            RGBendinone = dc.GetPixel (cursor[0]+onetcp[0]-10,cursor[1]+onetcp[1])
-            endinoneI = getintensity(RGBendinone)
+            #RGBendinone = dc.GetPixel (cursor[0]+onetcp[0]-10,cursor[1]+onetcp[1])
+            endinoneI = getintensity(cursor[0]+onetcp[0]-10,cursor[1]+onetcp[1])
             
             print(cursor[0]+onetcp[0]-10,cursor[1]+onetcp[1])
             print(endinoneI)
@@ -582,8 +628,7 @@ while(True):
             time.sleep(.1)
         #Grace peroid at beginning of race before reading checkpoints    
         elif(time.time()-racetimer < graceperiod and lap == 1):
-            print(round(graceperiod-(time.time()-racetimer),1))
-            time.sleep(.1)
+            time.sleep(0.01)  
             
         #Check if intensity of pixel is reached then do checkpoint    
         elif(240 <= Intensity <= 240 and not (ccp == 0 and lap == maxlap) and endindoneReady or dottieI < 235):
@@ -663,6 +708,8 @@ while(True):
             lap += 1
             pcp = 1
             if(lap > maxlap):
+                d.stop()
+                del d
                 start = 2
                 break
             
