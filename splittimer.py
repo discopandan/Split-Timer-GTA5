@@ -100,7 +100,7 @@ keybindings = []
 
 for i in mylist:
     i = i [5:]
-    i = i [:1]
+    i = i [:i.find(" ")]
     keybindings.append(i)
 
 
@@ -271,7 +271,7 @@ while(True):
             break
 
         #Decrease max laps
-        if(keyboard.is_pressed(keybind_2) and keyboard.is_pressed(keybind_6) and maxlap > 1):
+        if(keyboard.is_pressed(keybind_2 + "+" + keybind_6) and maxlap > 1):
             if not was_pressed_2:
                 maxlap -= 1
                 was_pressed_2 = True
@@ -282,7 +282,7 @@ while(True):
 
 
         #Increase max laps
-        if(keyboard.is_pressed(keybind_1) and keyboard.is_pressed(keybind_6) and maxlap < 99):
+        if(keyboard.is_pressed(keybind_1 + "+" + keybind_6) and maxlap < 99):
             if not was_pressed_1:
                 maxlap += 1
                 was_pressed_1 = True
@@ -341,7 +341,10 @@ while(True):
     releaseme = time.time()-5
 
     while(True):
+        #script was too fast so had to sleep it a bit
+        time.sleep(0.000001)
 
+        
         #print('Loop took %s seconds' % (time.time()-last_time))
         #last_time = time.time()
 
@@ -355,11 +358,12 @@ while(True):
             #releaseKey(Z)
                 
         #zboisRGB = dc.GetPixel (58,34)
-        zboisI = getintensity(58,34)        
+        zboisI = getintensity(57,34)        
 
         #globeRGB = dc.GetPixel (1210,17)        
         globeI = getintensity(1210,17)
 
+        #Added releaseme delta because it would run twice, so it waits .75 sec before going again
         releasemedelta = time.time()-releaseme
         
         if(globeI > 0 and zboisI < 245 and not (ccp == 0 and lap == maxlap) and releasemedelta > .75): #234
@@ -372,30 +376,41 @@ while(True):
             while(True):
                 
                 #zboisRGB = dc.GetPixel (58,34) #(50,30)
-                zboisI = getintensity(58,34)
+                zboisI = getintensity(57,34)
                 #print(zboisI)
                 time.sleep(0.005)
                 count += 1
                 if(zboisI > 245):
-                    print(count)
-                    print("i did it actually, wtf")
+                    #print(count)
+                    #print("i did it actually, wtf")
                     #print("Looped: %s times" % (count))
                     time.sleep(0.05)
+                    zisset = False
                     break
                 
                 elif(count > 29):
                     print(zboisI)
-                    print("58,34")
+                    print("57,34")
                     print("I got suck in vinkelvolten: %s times" % (count))
                     break
 
         #just in case Z is pressed it corrects it back to normal
-        #elif(zboisI < 234 and globeI > 0 and not (ccp == 0 and lap == maxlap) and releasemedelta > .25):
-            #print("pressed Z")
-            #pressKey(Z)
-            #time.sleep(.055)
-            #releaseKey(Z)
-            #releaseme = time.time()
+        elif(zboisI < 245 and not (ccp == 0 and lap == maxlap) and releasemedelta > .25):
+
+            if not zisset:
+                zisset = True
+                ztime = time.time()
+                
+            if zisset:
+                if(time.time()-ztime > .25):
+                    
+                    print("Reopened UI")
+                    pressKey(Z)
+                    time.sleep(.015)
+                    releaseKey(Z)
+                    releaseme = time.time()
+                    zisset = False
+
         
         #sets Current Check Point to 0 if you are at the last checkpoint(lcp)
         if(ccp >= lcp):
@@ -417,7 +432,7 @@ while(True):
 
         
         #Cursors row increase
-        if(keyboard.is_pressed(keybind_1) and keyboard.is_pressed(keybind_6) and cursorrow < 10):
+        if(keyboard.is_pressed(keybind_1 + "+" + keybind_6) and cursorrow < 10):
             if not was_pressed_1:
                 cursorrow += 1
                 cursor = [cursor[0],cursor[1]-43]
@@ -426,17 +441,17 @@ while(True):
                 was_pressed_1 = True
                 
         #Cursor row decrease
-        elif(keyboard.is_pressed(keybind_2) and keyboard.is_pressed(keybind_6) and cursorrow > 1):
+        elif(keyboard.is_pressed(keybind_2 + "+" + keybind_6) and cursorrow > 1):
             if not was_pressed_2:
                 cursorrow -= 1
                 cursor = [cursor[0],cursor[1]+43]
                 print("Checkpoint Row: ▼ %s" % (cursorrow))
                 print(cursor)
                 was_pressed_2 = True
-                print("don't know what's going on")
                 
         #Decrease max checkpoints -10
-        elif(keyboard.is_pressed(keybind_4) and keyboard.is_pressed(keybind_6) and lcp > 11):
+        elif(keyboard.is_pressed(keybind_4 + "+" + keybind_6) and lcp > 11):
+
             if not was_pressed_4:
                 lcp -= 10
                 cursor = [cursorpos[lcp-1],cursor[1]]
@@ -449,7 +464,7 @@ while(True):
                 print("Max Checkpoints: ▼ %s" % (lcp))
 
         #Increase max checkpoints +10
-        elif(keyboard.is_pressed(keybind_3) and keyboard.is_pressed(keybind_6) and lcp < 89):
+        elif(keyboard.is_pressed(keybind_3 + "+" + keybind_6) and lcp < 89):
             if not was_pressed_3:
                 lcp += 10
                 cursor = [cursorpos[lcp-1],cursor[1]]
@@ -461,44 +476,44 @@ while(True):
                     lcpendinone = False
                 print("Max Checkpoints: ▲ %s" % (lcp))
 
-        #Back 1 checkpoint
-        elif(keyboard.is_pressed(keybind_4) and keyboard.is_pressed(keybind_7) and not ccp <= 1):
+        #Back 2 checkpoint
+        elif(keyboard.is_pressed(keybind_4 + "+" + keybind_7) and not ccp <= 1):
             if not was_pressed_4:
-                ccp -= 1
+                ccp -= 2
                 print("Current Checkpoint: ▼ %s" % (ccp))
                 was_pressed_4 = True
                 invalidlap = True
             
         #Forward 1 checkpoint
-        elif(keyboard.is_pressed(keybind_3) and keyboard.is_pressed(keybind_7) and not ccp >= lcp):
+        elif(keyboard.is_pressed(keybind_3 + "+" + keybind_7) and not ccp >= lcp):
             if not was_pressed_3:
                 ccp += 1
                 print("Current Checkpoint: ▲ %s" % (ccp))
                 was_pressed_3 = True
                 invalidlap = True
                 delta = time.time()-racetimer
-                
+                time.sleep(0.1)               
                 try:
                     ccptimings[pcp] = delta
                 except:
                     ccptimings = np.append(ccptimings, delta)
                 
         #Forward 1 lap
-        elif(keyboard.is_pressed(keybind_1) and keyboard.is_pressed(keybind_7) and lap < maxlap):
+        elif(keyboard.is_pressed(keybind_1 + "+" + keybind_7) and lap < maxlap):
             if not was_pressed_1:
                 lap += 1
                 print("Current Lap: ▲ %s" % (lap))
                 was_pressed_1 = True        
       
         #Backwards 1 lap
-        elif(keyboard.is_pressed(keybind_2) and keyboard.is_pressed(keybind_7) and lap > 1):
+        elif(keyboard.is_pressed(keybind_2 + "+" + keybind_7) and lap > 1):
             if not was_pressed_2:
                 lap -= 1
                 print("Current Lap: ▼ %s" % (lap))
                 was_pressed_2 = True
                 
         #Pause
-        elif(keyboard.is_pressed(keybind_5) and keyboard.is_pressed(keybind_6) and maxlap < 99):
+        elif(keyboard.is_pressed(keybind_5 + "+" + keybind_6) and maxlap < 99):
             if not was_pressed_5:
                 print("Paused!... press %s to resume" % (keybind_5))
                 if(fullscreen):
@@ -520,7 +535,7 @@ while(True):
                         was_pressed_5 = False
             
         #Restart race
-        elif(keyboard.is_pressed(keybind_5) and keyboard.is_pressed(keybind_7) and maxlap < 99):
+        elif(keyboard.is_pressed(keybind_5 + "+" + keybind_7) and maxlap < 99):
             if not was_pressed_5:
                 was_pressed_5 = True
                 print("Restart, back to beginning of script")
@@ -529,11 +544,10 @@ while(True):
                     del d
                 start = 2
                 break                
-        else:
-            was_pressed_5 = False
+
             
         #Decrease max checkpoints
-        if(keyboard.is_pressed(keybind_4) and lcp > 1):
+        elif(keyboard.is_pressed(keybind_4) and lcp > 1):
             if not was_pressed_4:
                 lcp -= 1
                 cursor = [cursorpos[lcp-1],cursor[1]]
@@ -545,11 +559,9 @@ while(True):
                     lcpendinone = False
                     
                 print("Max Checkpoints: ▼ %s" % (lcp))                
-        else:
-            was_pressed_4 = False
                     
         #Increase max checkpoints
-        if(keyboard.is_pressed(keybind_3) and lcp < 99):
+        elif(keyboard.is_pressed(keybind_3) and lcp < 99):
             if not was_pressed_3:
                 lcp += 1
                 cursor = [cursorpos[lcp-1],cursor[1]]
@@ -561,11 +573,9 @@ while(True):
                     lcpendinone = False
                     
                 print("Max Checkpoints: ▲ %s" % (lcp))
-        else:
-            was_pressed_3 = False
 
         #Respawn timer grace period
-        if(keyboard.is_pressed(keybind_8)):
+        elif(keyboard.is_pressed(keybind_8)):
             if not was_pressed_8:
                 was_pressed_8 = True
                 timerkey8 = time.time()
@@ -576,26 +586,27 @@ while(True):
                 if(time.time()-timerkey8 > 2.5):
                     respawntimer = time.time()
                     print("You did it, you held it for 2.5 sec")
-        else:
-            was_pressed_8 = False
                     
         #Decrease max laps
-        if(keyboard.is_pressed(keybind_2)):
+        elif(keyboard.is_pressed(keybind_2)):
             if not was_pressed_2 and maxlap > 1:
                 maxlap -= 1
                 was_pressed_2 = True
                 print("Max Lap: ▼ %s" % (maxlap))
-        else:
-            was_pressed_2 = False
                     
         #Increase max laps
-        if(keyboard.is_pressed(keybind_1) and maxlap < 99):
+        elif(keyboard.is_pressed(keybind_1) and maxlap < 99):
             if not was_pressed_1:
                 maxlap += 1
                 was_pressed_1 = True
                 print("Max Lap: ▲ %s" % (maxlap))
         else:
             was_pressed_1 = False
+            was_pressed_2 = False
+            was_pressed_3 = False
+            was_pressed_4 = False
+            was_pressed_5 = False
+            was_pressed_8 = False
             
         if(ccp == 0 and lap == maxlap):
             #dottieRGB = dc.GetPixel (1846,1051)
@@ -615,8 +626,8 @@ while(True):
             #RGBendinone = dc.GetPixel (cursor[0]+onetcp[0]-10,cursor[1]+onetcp[1])
             endinoneI = getintensity(cursor[0]+onetcp[0]-10,cursor[1]+onetcp[1])
             
-            print(cursor[0]+onetcp[0]-10,cursor[1]+onetcp[1])
-            print(endinoneI)
+            #print(cursor[0]+onetcp[0]-10,cursor[1]+onetcp[1])
+            #print(endinoneI)
             if(endinoneI < 240):
                 endindoneReady = True
             else:
@@ -632,8 +643,8 @@ while(True):
             
         #Check if intensity of pixel is reached then do checkpoint    
         elif(240 <= Intensity <= 240 and not (ccp == 0 and lap == maxlap) and endindoneReady or dottieI < 235):
-            print(Intensity)
-            print(cursor[0]+tcp[0],cursor[1]+tcp[1])
+            #print(Intensity)
+            #print(cursor[0]+tcp[0],cursor[1]+tcp[1])
             delta = time.time()-racetimer
             try:
                 checkpointdelta = delta - bestccptimings[pcp]
