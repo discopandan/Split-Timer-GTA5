@@ -5,7 +5,7 @@ Split timer GTA5 is a python script that output split timings, your last lap tim
 
 Link to video of it in action: [Link](http://a.com)
 
-Download latest verions here(follow instructions bellow): [SplitTimer.zip](https://drive.google.com/uc?export=download&confirm=BAXg&id=1PghXbmV3eSt5vVFN0ZCdl-KXdKVZZJVV)
+Download latest verions here(follow instructions bellow): [SplitTimer.zip](https://drive.google.com/u/0/uc?export=download&id=1PghXbmV3eSt5vVFN0ZCdl-KXdKVZZJVV)
 
 
 It does this by checking for a pixel in the checkpoint number and when it changes it knows it hit a check point and records the time of that checkpoint. It counts them and and with user input knows how many checkpoints there are in total to know when a lap has been completed. 
