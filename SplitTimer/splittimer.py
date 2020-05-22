@@ -113,9 +113,9 @@ keybind_6 = keybindings[6]  #KEY6:O 	MODIFIER					 | MODIFIER
 keybind_7 = keybindings[7]  #KEY7:L 	CHEAT MODIFIER					 | CHEAT MODIFIER
 keybind_8 = keybindings[8]  #KEY8:F     YOUR IN GAME RESPAWN BUTTON                      | PREVENTS FALSE CHECKPOINT TRIGGER WHEN RESPAWNING
 
-print("           NORMAL     / +MODIFIER   / +CHEAT MODIFIER")
-print("KEY1:%s     Max lap +1 / Max lap +10 / Forward 1 lap         | LAP KEY UP" % (keybind_1))
-print("KEY2:%s     Max lap -1 / Max lap -10 / Backwards 1 lap 	    | LAP KEY DOWN" % (keybind_2))
+print("           NORMAL      / +MODIFIER   / +CHEAT MODIFIER")
+print("KEY1:%s     Max lap +1 / CP Row +1   / Forward 1 lap         | LAP KEY UP" % (keybind_1))
+print("KEY2:%s     Max lap -1 / CP Row -1   / Backwards 1 lap 	    | LAP KEY DOWN" % (keybind_2))
 print("KEY3:%s     Max CP +1  / Max CP +10  / Forward 1 Checkpoint  | CHECKPOINT KEY UP" % (keybind_3))
 print("KEY4:%s     Max CP -1  / Max CP -10  / Backwards 1 Checkpoint| CHECKPOINT KEY DOWN" % (keybind_4))
 print("KEY5:%s     START      / PAUSE       / RESTART		    | START" % (keybind_5))
