@@ -3,7 +3,7 @@
 ## What is it?
 Split timer GTA5 is a python script that output split timings, your last lap times and best lap time for GTA5 races. 
 
-Link to video of it in action: [Link](http://a.com)
+Link to video of it in action: [https://www.youtube.com/watch?v=FFvwj7o-fw4](https://www.youtube.com/watch?v=FFvwj7o-fw4)
 
 Download latest verions here(follow instructions bellow): [SplitTimer.zip](https://drive.google.com/u/0/uc?export=download&id=1PghXbmV3eSt5vVFN0ZCdl-KXdKVZZJVV)
 
