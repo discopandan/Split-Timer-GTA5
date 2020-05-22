@@ -91,3 +91,8 @@ e) Move "profiles" folder from the SplitTimer.zip/PlayClaw/ folder to C:\Program
 **5.** Launch Play Claw and a game and see if the overlay is working, if not, in Play Claw click plugins button, the purple one, and then reconnect all Text Overlays and Image overlay Blackbar to their correct text files. 
 
 **6.** Start SplitTimer.exe and you are good to go
+
+##Shoutout to D3DShot
+[https://github.com/SerpentAI/D3DShot](https://github.com/SerpentAI/D3DShot)
+Allows to grab pixels from fullscreen game super fast
+
