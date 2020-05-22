@@ -82,7 +82,9 @@ b) Start play claw, click "Try it" and then close it
 c) Move "plugins" folder from the SplitTimer.zip/PlayClaw/ folder to
 C:\Program Files (x86)\PlayClaw 5 Plus
 
-d) Move "profiles" folder from the SplitTimer.zip/PlayClaw/ folder to C:\ProgramData\PlayClaw5plus
+d) Open default.txt in profiles folder and replace all the %username% with your windows username
+
+e) Move "profiles" folder from the SplitTimer.zip/PlayClaw/ folder to C:\ProgramData\PlayClaw5plus
 
 (take note, profiles folder goes to different location than the plugins folder)
 
