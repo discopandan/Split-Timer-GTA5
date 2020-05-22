@@ -1,5 +1,0 @@
-MAX LAP:3	/ How many laps the race is
-MAX CHP:20	/ How many check points there are
-CHP ROW:4	/ What row is the checkpoints at the right side of screen, counting from bottom
-GRACEPR:7	/ Grace period at start in seconds of race before it reads checkpoints so you can change max checkpoints
-FULLSCR:1	/ 1 = If your game is fullscreen 0 = If your game is windowed fullscreen, it also uses less CPU
