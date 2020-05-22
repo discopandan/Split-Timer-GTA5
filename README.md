@@ -92,7 +92,8 @@ e) Move "profiles" folder from the SplitTimer.zip/PlayClaw/ folder to C:\Program
 
 **6.** Start SplitTimer.exe and you are good to go
 
-##Shoutout to D3DShot
+## Shoutout to D3DShot
+
 [https://github.com/SerpentAI/D3DShot](https://github.com/SerpentAI/D3DShot)
 Allows to grab pixels from fullscreen game super fast
 
