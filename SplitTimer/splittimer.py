@@ -175,11 +175,17 @@ prevgrace = 0
 lcpendinone = False
 respawntimer = 0
 maxlap = 1
+lcp = settings[1]
 was_maxlap_changed = False
+was_lcp_changed = False
+
+cursorrow = settings[2]
+cursor = [cursorpos[lcp-1],924-(cursorrow-4)*44]
+
 
 start = 2
 
-
+zisset = False
 
 invalidlap = False
 
@@ -245,6 +251,9 @@ while(True):
                 file = open("laptimes.txt","w")
                 file.write("")
                 file.close()
+
+                
+                
                 was_pressed_5 = True
                 break
         else:
@@ -270,26 +279,88 @@ while(True):
             startrace()
             break
 
+        time.sleep(0.0001)
+        #Decrease max checkpoints -10
+        if(keyboard.is_pressed(keybind_4 + "+" + keybind_6) and lcp > 11):
+
+            if not was_pressed_4:
+                lcp -= 10
+                cursor = [cursorpos[lcp-1],cursor[1]]
+                was_pressed_4 = True
+                was_lcp_changed = True
+                
+                if(lcp in (11, 21, 31, 41, 51, 61, 71, 81, 91)):
+                    lcpendinone = True
+                else:
+                    lcpendinone = False
+                print("Max Checkpoints: ▼ %s" % (lcp))
+
+        #Increase max checkpoints +10
+        elif(keyboard.is_pressed(keybind_3 + "+" + keybind_6) and lcp < 89):
+            if not was_pressed_3:
+                lcp += 10
+                cursor = [cursorpos[lcp-1],cursor[1]]
+                was_pressed_3 = True
+                was_lcp_changed = True
+
+                if(lcp in (11, 21, 31, 41, 51, 61, 71, 81, 91)):
+                    lcpendinone = True
+                else:
+                    lcpendinone = False
+                print("Max Checkpoints: ▲ %s" % (lcp))
+        
         #Decrease max laps
-        if(keyboard.is_pressed(keybind_2 + "+" + keybind_6) and maxlap > 1):
+        elif(keyboard.is_pressed(keybind_2 + "+" + keybind_6) and maxlap > 1):
             if not was_pressed_2:
                 maxlap -= 1
                 was_pressed_2 = True
                 was_maxlap_changed = True
                 print("Max Lap: %s" % (maxlap))
-        else:
-            was_pressed_2 = False
 
 
         #Increase max laps
-        if(keyboard.is_pressed(keybind_1 + "+" + keybind_6) and maxlap < 99):
+        elif(keyboard.is_pressed(keybind_1 + "+" + keybind_6) and maxlap < 99):
             if not was_pressed_1:
                 maxlap += 1
                 was_pressed_1 = True
                 was_maxlap_changed = True
                 print("Max Lap: %s" % (maxlap))
+
+        #Decrease max checkpoints
+        elif(keyboard.is_pressed(keybind_4) and lcp > 1):
+            if not was_pressed_4:
+                lcp -= 1
+                cursor = [cursorpos[lcp-1],cursor[1]]
+                was_pressed_4 = True
+                was_lcp_changed = True
+                
+                if(lcp in (11, 21, 31, 41, 51, 61, 71, 81, 91)):
+                    lcpendinone = True
+                else:
+                    lcpendinone = False
+                    
+                print("Max Checkpoints: ▼ %s" % (lcp))                
+                    
+        #Increase max checkpoints
+        elif(keyboard.is_pressed(keybind_3) and lcp < 99):
+            if not was_pressed_3:
+                lcp += 1
+                cursor = [cursorpos[lcp-1],cursor[1]]
+                was_pressed_3 = True
+                was_lcp_changed = True
+                
+                if(lcp in (11, 21, 31, 41, 51, 61, 71, 81, 91)):
+                    lcpendinone = True
+                else:
+                    lcpendinone = False
+                    
+                print("Max Checkpoints: ▲ %s" % (lcp))
+
         else:
             was_pressed_1 = False
+            was_pressed_2 = False
+            was_pressed_3 = False
+            was_pressed_4 = False
 
 #---------------------------------------------------------------
 #RACESTART!
@@ -308,19 +379,23 @@ while(True):
     else:
         was_maxlap_changed = False
 
+    if(was_lcp_changed == False):
+        cursorrow = settings[2]
+        lcp = settings[1]
+        cursor = [cursorpos[lcp-1],924-(cursorrow-4)*44]
+    else:
+        was_lcp_changed = False
+
     graceperiod = settings[3]
     gracecounter = graceperiod+1
     
-    lcp = settings[1]
+    #lcp = settings[1]
 
     if(lcp in (11, 21, 31, 41, 51, 61, 71, 81, 91)):
         lcpendinone = True
     else:
         lcpendinone = False
     
-    cursorrow = settings[2]
-      
-    cursor = [cursorpos[lcp-1],924-(cursorrow-4)*43]
 
     lap = 1
     ccp = 1
@@ -435,7 +510,7 @@ while(True):
         if(keyboard.is_pressed(keybind_1 + "+" + keybind_6) and cursorrow < 10):
             if not was_pressed_1:
                 cursorrow += 1
-                cursor = [cursor[0],cursor[1]-43]
+                cursor = [cursor[0],cursor[1]-44]
                 print("Checkpoint Row: ▲ %s" % (cursorrow))
                 print(cursor)
                 was_pressed_1 = True
@@ -444,7 +519,7 @@ while(True):
         elif(keyboard.is_pressed(keybind_2 + "+" + keybind_6) and cursorrow > 1):
             if not was_pressed_2:
                 cursorrow -= 1
-                cursor = [cursor[0],cursor[1]+43]
+                cursor = [cursor[0],cursor[1]+44]
                 print("Checkpoint Row: ▼ %s" % (cursorrow))
                 print(cursor)
                 was_pressed_2 = True
@@ -607,6 +682,7 @@ while(True):
             was_pressed_4 = False
             was_pressed_5 = False
             was_pressed_8 = False
+
             
         if(ccp == 0 and lap == maxlap):
             #dottieRGB = dc.GetPixel (1846,1051)
