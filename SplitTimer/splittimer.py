@@ -225,7 +225,7 @@ while(True):
     
     print("PAUSED... waiting for input press '%s' to load script" % (keybind_5))
     while(start == 2):
-        #time.sleep(0.05)
+        time.sleep(0.05)
         if(keyboard.is_pressed(keybind_5)):
             if not was_pressed_5:
 
