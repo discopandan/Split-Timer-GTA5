@@ -74,6 +74,21 @@ def timedisplay(inputtime):
     return(Outputtime)
 
 #----------------------------------------------------------
+#Write to file
+statuscleared = False
+laststatus = 0
+
+def writetofile(name,text,operation):
+    global statuscleared
+    global laststatus
+    file = open("%s.txt" % name,operation)
+    file.write(text)
+    file.close()
+    
+    statuscleared = False    
+    laststatus = time.time()
+
+#----------------------------------------------------------
 #Clear files
 file = open("checkpointblue.txt","w")
 file.write("")
@@ -180,7 +195,7 @@ was_maxlap_changed = False
 was_lcp_changed = False
 
 cursorrow = settings[2]
-cursor = [cursorpos[lcp-1],924-(cursorrow-4)*44]
+cursor = [cursorpos[lcp-1],924-(cursorrow-4)*43]
 
 
 start = 2
@@ -219,11 +234,15 @@ def getintensity(inX,inY):
 def startrace():
     start = 1
     print("GOOOOOOO!!!!")
+    writetofile("status","GOOOOOOO!!!!\n","a")
       
 #d = d3dshot.create(capture_output="numpy",frame_buffer_size=10)
 while(True):
     
     print("PAUSED... waiting for input press '%s' to load script" % (keybind_5))
+
+    writetofile("checkpointred","\nPAUSED...","w")
+    
     while(start == 2):
         time.sleep(0.05)
         if(keyboard.is_pressed(keybind_5)):
@@ -259,7 +278,9 @@ while(True):
         else:
             was_pressed_5 = False
             
-    print("READY... waiting for race to start or input press '%s' to start" % (keybind_5))    
+    print("READY... waiting for race to start or input press '%s' to start" % (keybind_5))
+    writetofile("checkpointblue","READY...","w")
+    writetofile("checkpointred","","w")
     while(start == 0):
         
         #startRGB = dc.GetPixel (1030,266)
@@ -294,6 +315,7 @@ while(True):
                 else:
                     lcpendinone = False
                 print("Max Checkpoints: ▼ %s" % (lcp))
+                writetofile("status","Max Checkpoints: %s\n" % (lcp),"a")
 
         #Increase max checkpoints +10
         elif(keyboard.is_pressed(keybind_3 + "+" + keybind_6) and lcp < 89):
@@ -308,6 +330,7 @@ while(True):
                 else:
                     lcpendinone = False
                 print("Max Checkpoints: ▲ %s" % (lcp))
+                writetofile("status","Max Checkpoints: %s\n" % (lcp),"a")
         
         #Decrease max laps
         elif(keyboard.is_pressed(keybind_2 + "+" + keybind_6) and maxlap > 1):
@@ -315,7 +338,8 @@ while(True):
                 maxlap -= 1
                 was_pressed_2 = True
                 was_maxlap_changed = True
-                print("Max Lap: %s" % (maxlap))
+                print("Max Lap: ▼ %s" % (maxlap))
+                writetofile("status","Max Lap: %s\n" % (maxlap),"a")
 
 
         #Increase max laps
@@ -324,7 +348,8 @@ while(True):
                 maxlap += 1
                 was_pressed_1 = True
                 was_maxlap_changed = True
-                print("Max Lap: %s" % (maxlap))
+                print("Max Lap: ▲ %s" % (maxlap))
+                writetofile("status","Max Lap: %s\n" % (maxlap),"a")
 
         #Decrease max checkpoints
         elif(keyboard.is_pressed(keybind_4) and lcp > 1):
@@ -339,7 +364,8 @@ while(True):
                 else:
                     lcpendinone = False
                     
-                print("Max Checkpoints: ▼ %s" % (lcp))                
+                print("Max Checkpoints: ▼ %s" % (lcp))
+                writetofile("status","Max Checkpoints: %s\n" % (lcp),"a")
                     
         #Increase max checkpoints
         elif(keyboard.is_pressed(keybind_3) and lcp < 99):
@@ -355,6 +381,7 @@ while(True):
                     lcpendinone = False
                     
                 print("Max Checkpoints: ▲ %s" % (lcp))
+                writetofile("status","Max Checkpoints: %s\n" % (lcp),"a")
 
         else:
             was_pressed_1 = False
@@ -367,6 +394,8 @@ while(True):
 #---------------------------------------------------------------
 
     racetimer = time.time()
+
+    
 
     #   settings[0] maxlap | MAX LAPs
     #   settings[1] lcp | MAX CPs
@@ -382,7 +411,7 @@ while(True):
     if(was_lcp_changed == False):
         cursorrow = settings[2]
         lcp = settings[1]
-        cursor = [cursorpos[lcp-1],924-(cursorrow-4)*44]
+        cursor = [cursorpos[lcp-1],924-(cursorrow-4)*43]
     else:
         was_lcp_changed = False
 
@@ -411,7 +440,12 @@ while(True):
     print("Laps: %s\n" % (maxlap))
     print("Checkpoints: %s\n" % (lcp))
     print("Checkpoint at row: %s\n" % (cursorrow))
+    writetofile("status","Laps: %s\n" % (maxlap),"a")
+    writetofile("status","Checkpoints: %s\n" % (lcp),"a")
+    writetofile("status","Checkpoint at row: %s\n" % (cursorrow),"a")
 
+    writetofile("checkpointblue","","w")
+    
     #last_time = time.time()
     releaseme = time.time()-5
 
@@ -419,7 +453,11 @@ while(True):
         #script was too fast so had to sleep it a bit
         time.sleep(0.000001)
 
-        
+        #Clear status file
+        if(statuscleared == False and time.time()-laststatus > 2):
+            writetofile("status","","w")
+            statuscleared = True
+
         #print('Loop took %s seconds' % (time.time()-last_time))
         #last_time = time.time()
 
@@ -510,8 +548,9 @@ while(True):
         if(keyboard.is_pressed(keybind_1 + "+" + keybind_6) and cursorrow < 10):
             if not was_pressed_1:
                 cursorrow += 1
-                cursor = [cursor[0],cursor[1]-44]
+                cursor = [cursor[0],cursor[1]-43]
                 print("Checkpoint Row: ▲ %s" % (cursorrow))
+                writetofile("status","Checkpoint Row: %s\n" % (cursorrow),"a")
                 print(cursor)
                 was_pressed_1 = True
                 
@@ -519,8 +558,9 @@ while(True):
         elif(keyboard.is_pressed(keybind_2 + "+" + keybind_6) and cursorrow > 1):
             if not was_pressed_2:
                 cursorrow -= 1
-                cursor = [cursor[0],cursor[1]+44]
+                cursor = [cursor[0],cursor[1]+43]
                 print("Checkpoint Row: ▼ %s" % (cursorrow))
+                writetofile("status","Checkpoint Row: %s\n" % (cursorrow),"a")
                 print(cursor)
                 was_pressed_2 = True
                 
@@ -537,6 +577,7 @@ while(True):
                 else:
                     lcpendinone = False
                 print("Max Checkpoints: ▼ %s" % (lcp))
+                writetofile("status","Max Checkpoints: %s\n" % (lcp),"a")
 
         #Increase max checkpoints +10
         elif(keyboard.is_pressed(keybind_3 + "+" + keybind_6) and lcp < 89):
@@ -550,12 +591,14 @@ while(True):
                 else:
                     lcpendinone = False
                 print("Max Checkpoints: ▲ %s" % (lcp))
+                writetofile("status","Max Checkpoints: %s\n" % (lcp),"a")
 
         #Back 2 checkpoint
         elif(keyboard.is_pressed(keybind_4 + "+" + keybind_7) and not ccp <= 1):
             if not was_pressed_4:
                 ccp -= 2
                 print("Current Checkpoint: ▼ %s" % (ccp))
+                writetofile("status","Current Checkpoint: %s\n" % (ccp),"a")
                 was_pressed_4 = True
                 invalidlap = True
             
@@ -564,6 +607,7 @@ while(True):
             if not was_pressed_3:
                 ccp += 1
                 print("Current Checkpoint: ▲ %s" % (ccp))
+                writetofile("status","Current Checkpoint: %s\n" % (ccp),"a")
                 was_pressed_3 = True
                 invalidlap = True
                 delta = time.time()-racetimer
@@ -578,6 +622,7 @@ while(True):
             if not was_pressed_1:
                 lap += 1
                 print("Current Lap: ▲ %s" % (lap))
+                writetofile("status","Current Lap: %s\n" % (lap),"a")
                 was_pressed_1 = True        
       
         #Backwards 1 lap
@@ -585,12 +630,14 @@ while(True):
             if not was_pressed_2:
                 lap -= 1
                 print("Current Lap: ▼ %s" % (lap))
+                writetofile("status","Current Lap: %s\n" % (lap),"a")
                 was_pressed_2 = True
                 
         #Pause
         elif(keyboard.is_pressed(keybind_5 + "+" + keybind_6) and maxlap < 99):
             if not was_pressed_5:
                 print("Paused!... press %s to resume" % (keybind_5))
+                writetofile("checkpointred","\nPaused!...","w")
                 if(fullscreen):
                     d.stop()
                     del d
@@ -601,6 +648,7 @@ while(True):
                         if not was_pressed_5:
                             was_pressed_5 = True
                             print("Unpaused! Go!")
+                            writetofile("checkpointred","","w")
                             if(fullscreen):
                                 d = d3dshot.create(capture_output="numpy",frame_buffer_size=10)
                                 d.capture(target_fps = 100)
@@ -614,6 +662,7 @@ while(True):
             if not was_pressed_5:
                 was_pressed_5 = True
                 print("Restart, back to beginning of script")
+                writetofile("status","\nRestart...","w")
                 if(fullscreen):
                     d.stop()
                     del d
@@ -633,7 +682,8 @@ while(True):
                 else:
                     lcpendinone = False
                     
-                print("Max Checkpoints: ▼ %s" % (lcp))                
+                print("Max Checkpoints: ▼ %s" % (lcp))
+                writetofile("status","Max Checkpoints: %s\n" % (lcp),"a")
                     
         #Increase max checkpoints
         elif(keyboard.is_pressed(keybind_3) and lcp < 99):
@@ -648,6 +698,7 @@ while(True):
                     lcpendinone = False
                     
                 print("Max Checkpoints: ▲ %s" % (lcp))
+                writetofile("status","Max Checkpoints: %s\n" % (lcp),"a")
 
         #Respawn timer grace period
         elif(keyboard.is_pressed(keybind_8)):
@@ -668,6 +719,7 @@ while(True):
                 maxlap -= 1
                 was_pressed_2 = True
                 print("Max Lap: ▼ %s" % (maxlap))
+                writetofile("status","Max Lap: %s\n" % (maxlap),"a")
                     
         #Increase max laps
         elif(keyboard.is_pressed(keybind_1) and maxlap < 99):
@@ -675,6 +727,7 @@ while(True):
                 maxlap += 1
                 was_pressed_1 = True
                 print("Max Lap: ▲ %s" % (maxlap))
+                writetofile("status","Max Lap: %s\n" % (maxlap),"a")
         else:
             was_pressed_1 = False
             was_pressed_2 = False
@@ -756,6 +809,7 @@ while(True):
             
             ccp += 1
             print("Checkpoint: %s" % (ccp))
+            writetofile("status","Checkpoint: %s\n" % (ccp),"a")
         
 
 
