@@ -67,32 +67,10 @@ L+J = Decrease current checkpoint -1 (if you need to adjust what checkpoint the 
 
 ## Installing
 
-**1.** Open SplitTimer.zip
-
-**2.** Install fonts from fonts folder. Select all, right click, Install.
-
-**3.** Move SplitTimer folder to your Documents folder
-
-C:\Users\%username%\Documents\
-
-**4.** Open Play Claw folder from SplitTimer.zip
-
-a) Install playclaw5.3708.exe
-
-b) Start play claw, click "Try it" and then close it
-
-c) Move "plugins" folder from the SplitTimer.zip/PlayClaw/ folder to
-C:\Program Files (x86)\PlayClaw 5 Plus
-
-d) Open default.txt in profiles folder and replace all the %username% with your windows username
-
-e) Move "profiles" folder from the SplitTimer.zip/PlayClaw/ folder to C:\ProgramData\PlayClaw5plus
-
-(take note, profiles folder goes to different location than the plugins folder)
-
-**5.** Launch Play Claw and a game and see if the overlay is working, if not, in Play Claw click plugins button, the purple one, and then reconnect all Text Overlays and Image overlay Blackbar to their correct text files. 
-
-**6.** Start SplitTimer.exe and you are good to go
+1. Install Play Claw and run it once and then close it. (so folders will be created)
+2. Run "Programdata-PlayClaw5.exe" and export the files into C:\ProgramData\PlayClaw5plus
+3. Run "Programfiles-x86-PlayClaw5.exe" and export the files into C:\Program Files (x86)\PlayClaw 5 Plus
+4. Start GTA V, Play Claw and Splittimer(as admin)
 
 ## Shoutout to D3DShot
 
