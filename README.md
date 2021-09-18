@@ -67,6 +67,7 @@ L+J = Decrease current checkpoint -1 (if you need to adjust what checkpoint the 
 
 ## Installing
 
+0. Download from Releases to the right
 1. Install Play Claw and run it once and then close it. (so folders will be created)
 2. Run "Programdata-PlayClaw5.exe" and export the files into C:\ProgramData\PlayClaw5plus
 3. Run "Programfiles-x86-PlayClaw5.exe" and export the files into C:\Program Files (x86)\PlayClaw 5 Plus
