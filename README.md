@@ -17,6 +17,7 @@ It outputs the time data into text files which can then be read by Play Claw and
 ## Controls
 
 Load up the script while in the car selection phase or in the loading screen before the race so that you are tabbed in and the script is ready to detect the race has started.
+You want the programs max laps and max checkpoints to match the ingame max laps and max checkpoints so it know when you have lapped and completed the race. Set this as fast as possible in the race before you go past checkpoint #2.
 
 **Before the race has started:**
 
